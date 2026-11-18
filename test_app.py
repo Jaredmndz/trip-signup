@@ -116,3 +116,18 @@ def test_pages_use_bootstrap_css_only(client, path):
     assert b"bootstrap@5.3.3/dist/css/bootstrap.min.css" in resp.data
     assert b'integrity="sha384-' in resp.data
     assert b"<script" not in resp.data
+
+
+def test_railway_start_command_points_at_real_app():
+    import importlib
+    import json
+    from pathlib import Path
+
+    from flask import Flask
+
+    config = json.loads((Path(__file__).parent / "railway.json").read_text())
+    command = config["deploy"]["startCommand"].split()
+    assert command[0] == "gunicorn"
+    module_name, attr = command[1].split(":")
+    module = importlib.import_module(module_name)
+    assert isinstance(getattr(module, attr), Flask)
