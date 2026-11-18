@@ -12,9 +12,13 @@
       <label class="form-label" for="email">Email</label>
       <input class="form-control" type="email" id="email" name="email" value="{{ email }}" required>
     </div>
-    <div class="mb-4">
+    <div class="mb-3">
       <label class="form-label" for="major">Major</label>
       <input class="form-control" id="major" name="major" value="{{ major }}" required>
+    </div>
+    <div class="mb-4">
+      <label class="form-label" for="guests">Number of guests</label>
+      <input class="form-control" type="number" id="guests" name="guests" min="0" max="10" value="{{ guests or 0 }}">
     </div>
     <button class="btn btn-primary" type="submit">Sign up</button>
   </form>

@@ -8,7 +8,8 @@ password-protected admin page.
 
 | Path      | What it does |
 |-----------|--------------|
-| `/`       | Sign-up form (name, email, major). Every field is required and the email must contain `@`. A bad submission shows the form again with an error. |
+| `/`       | Sign-up form (name, email, major, number of guests). Name, email and major are required and the email must contain `@`. Guests is optional (default 0) and must be a whole number from 0 to 10. A bad submission shows the form again with an error. |
+| `/count`  | Public JSON summary: `{"rsvps": <signups>, "headcount": <signups + guests>}`. Never includes names or emails. |
 | `/thanks` | Confirmation page shown after a successful sign-up. |
 | `/admin`  | Table of all signups and a count. Protected by HTTP Basic Auth. Any username works; the password must match `ADMIN_PASSWORD`. |
 

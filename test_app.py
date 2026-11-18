@@ -131,3 +131,66 @@ def test_railway_start_command_points_at_real_app():
     module_name, attr = command[1].split(":")
     module = importlib.import_module(module_name)
     assert isinstance(getattr(module, attr), Flask)
+
+
+def guest_counts(db_path):
+    conn = sqlite3.connect(db_path)
+    try:
+        return [r[0] for r in conn.execute("SELECT guests FROM signups ORDER BY id")]
+    finally:
+        conn.close()
+
+
+def test_signup_saves_guests(client, db_path):
+    client.post("/", data={"name": "Ada", "email": "ada@example.edu",
+                           "major": "Math", "guests": "2"})
+    client.post("/", data={"name": "Grace", "email": "grace@example.edu",
+                           "major": "CS"})
+    assert guest_counts(db_path) == [2, 0]
+
+
+@pytest.mark.parametrize("guests", ["-1", "abc", "1.5", "11"])
+def test_invalid_guests_rejected(client, db_path, guests):
+    resp = client.post("/", data={"name": "Ada", "email": "ada@example.edu",
+                                  "major": "Math", "guests": guests})
+    assert resp.status_code == 400
+    assert b"Guests must be" in resp.data
+    assert rows(db_path) == []
+
+
+def test_count_with_no_signups(client):
+    resp = client.get("/count")
+    assert resp.status_code == 200
+    assert resp.get_json() == {"rsvps": 0, "headcount": 0}
+
+
+def test_count_adds_guests_to_headcount(client):
+    for name, guests in [("Ada", "2"), ("Grace", "0"), ("Alan", "3")]:
+        client.post("/", data={"name": name, "email": f"{name}@example.edu",
+                               "major": "Math", "guests": guests})
+    resp = client.get("/count")
+    assert resp.status_code == 200
+    assert resp.get_json() == {"rsvps": 3, "headcount": 8}
+    assert b"@" not in resp.data
+
+
+def test_admin_shows_guests(client):
+    client.post("/", data={"name": "Ada", "email": "ada@example.edu",
+                           "major": "Math", "guests": "4"})
+    resp = client.get("/admin", auth=("admin", ADMIN_PASSWORD))
+    assert b"<th>Guests</th>" in resp.data
+    assert b"<td>4</td>" in resp.data
+
+
+def test_existing_database_without_guests_column_is_upgraded(db_path, client):
+    conn = sqlite3.connect(db_path)
+    with conn:
+        conn.execute("CREATE TABLE signups (id INTEGER PRIMARY KEY, name TEXT NOT NULL, "
+                     "email TEXT NOT NULL, major TEXT NOT NULL)")
+        conn.execute("INSERT INTO signups (name, email, major) VALUES (?, ?, ?)",
+                     ("Old", "old@example.edu", "History"))
+    conn.close()
+    assert client.get("/count").get_json() == {"rsvps": 1, "headcount": 1}
+    client.post("/", data={"name": "New", "email": "new@example.edu",
+                           "major": "Art", "guests": "1"})
+    assert client.get("/count").get_json() == {"rsvps": 2, "headcount": 3}
