@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Thank You{% endblock %}
+{% block content %}
+  <h1 class="h3 mb-3">Thanks for signing up!</h1>
+  <p class="lead">We'll be in touch with more details about the trip.</p>
+  <a class="btn btn-outline-secondary" href="{{ url_for('signup') }}">Back to the form</a>
+{% endblock %}
