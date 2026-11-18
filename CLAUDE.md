@@ -8,7 +8,7 @@ Flask app where students register interest in a study abroad trip.
 
 ## Rules
 - Add or update a test for every change. Run the tests before saying it's done.
-- Database: SQLite in signups.db via the built-in sqlite3 module. No ORM.
+- Database: SQLite in rsvp.db via the built-in sqlite3 module. No ORM.
 - SQL: parameterized queries only (?), never f-strings or string concatenation.
 - Never print or log applicant emails.
 - Plain HTML templates and CSS. No JavaScript frameworks.
@@ -16,5 +16,5 @@ Flask app where students register interest in a study abroad trip.
 
 ## Secrets and data
 - ADMIN_PASSWORD comes from .env, which pipenv run loads. Never hard-code it.
-- Never commit .env or signups.db. Do commit Pipfile and Pipfile.lock.
-- Tests use a temporary database, never signups.db.
+- Never commit .env or rsvp.db. Do commit Pipfile and Pipfile.lock.
+- Tests use a temporary database, never rsvp.db.

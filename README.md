@@ -51,13 +51,13 @@ pipenv run gunicorn app:app
 pipenv run pytest -q
 ```
 
-Tests use a temporary database, so they never touch `signups.db`.
+Tests use a temporary database, so they never touch `rsvp.db`.
 
 ## How it works
 
-- **Storage:** SQLite in `signups.db`, accessed through Python's built-in
+- **Storage:** SQLite in `rsvp.db`, accessed through Python's built-in
   `sqlite3` module (no ORM). The `signups` table is created automatically on
-  first use. `signups.db` is git-ignored.
+  first use. `rsvp.db` is git-ignored.
 - **Templates:** Plain Jinja templates in `templates/`, styled with Bootstrap 5
   CSS from a CDN (with an integrity hash). The pages use no JavaScript.
 - **Code:** Everything is in `app.py`. `create_app(database)` builds the app,

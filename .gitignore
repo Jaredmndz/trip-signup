@@ -1,4 +1,5 @@
 .env
+rsvp.db
 signups.db
 __pycache__/
 .pytest_cache/

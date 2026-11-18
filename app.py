@@ -7,7 +7,7 @@ from flask import Flask, Response, jsonify, redirect, render_template, request, 
 MAX_GUESTS = 10
 
 
-def create_app(database="signups.db"):
+def create_app(database="rsvp.db"):
     app = Flask(__name__)
     app.config["DATABASE"] = database
 

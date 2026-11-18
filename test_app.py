@@ -194,3 +194,8 @@ def test_existing_database_without_guests_column_is_upgraded(db_path, client):
     client.post("/", data={"name": "New", "email": "new@example.edu",
                            "major": "Art", "guests": "1"})
     assert client.get("/count").get_json() == {"rsvps": 2, "headcount": 3}
+
+
+def test_default_database_is_rsvp_db(monkeypatch):
+    monkeypatch.setenv("ADMIN_PASSWORD", ADMIN_PASSWORD)
+    assert create_app().config["DATABASE"] == "rsvp.db"
